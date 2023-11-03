@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-#!venv/bin/python3
+
 '''
 tento editor je navržen pro kresleni map k programu 'panacek.py'
 
