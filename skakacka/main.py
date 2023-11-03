@@ -69,7 +69,7 @@ veci = [nic,zed,bodaky,bodaky_shora,fal_zed]
 veci += zmeny
 
 #barvy = ['#ff8800','#00ff00','#0000ff','#ffff00','#ff00e6']
-mapy = glob.glob('mapy/*.json')
+mapy = glob.glob(file+'mapy/*.json')
 mapy.sort()
 mapa_vybrana = 0
 
