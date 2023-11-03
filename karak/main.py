@@ -22,7 +22,7 @@ class Dilek_I:
         self.rot = rot
         self.y = y
         self.x = x
-        self.obr = pygame.transform.rotate(pygame.image.load('obrazky/I.png'),self.rot)
+        self.obr = pygame.transform.rotate(pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/I.png'),self.rot)
         if self.rot == 0 or self.rot == 180:
             self.pruchod = [0,1,0,1]
         elif self.rot == 90 or self.rot == -90:
@@ -34,7 +34,7 @@ class Dilek_L:
         self.rot = rot
         self.y = y
         self.x = x
-        self.obr = pygame.transform.rotate(pygame.image.load('obrazky/L.png'),self.rot)
+        self.obr = pygame.transform.rotate(pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/L.png'),self.rot)
         if self.rot == 0:
             self.pruchod = [0,1,1,0]
         elif self.rot == 90:
@@ -50,7 +50,7 @@ class Dilek_T:
         self.rot = rot
         self.y = y
         self.x = x
-        self.obr = pygame.transform.rotate(pygame.image.load('obrazky/T.png'),self.rot)
+        self.obr = pygame.transform.rotate(pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/T.png'),self.rot)
         if self.rot == 0:
             self.pruchod = [1,0,1,1]
         elif self.rot == 90:
@@ -66,7 +66,7 @@ class Dilek_X:
         self.rot = rot
         self.y = y
         self.x = x
-        self.obr = pygame.transform.rotate(pygame.image.load('obrazky/X.png'),self.rot)
+        self.obr = pygame.transform.rotate(pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/X.png'),self.rot)
         self.pruchod = [1,1,1,1]
     def nakresli(self):
         mapa.blit(self.obr,(self.x*40,self.y*40))
@@ -81,7 +81,7 @@ class Krysa(Potvora):
     def __init__(self,x,y):
         self.jmeno = 'krysa'
         self.sila = 5
-        self.obr = pygame.image.load('obrazky/zmensene14/krysa.png')
+        self.obr = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/zmensene14/krysa.png')
         self.obr.set_colorkey('#ffffff')
         self.dava = 'dyky'
         super().__init__(x,y)
@@ -89,7 +89,7 @@ class Pavouk(Potvora):
     def __init__(self,x,y):
         self.jmeno = 'pavouk'
         self.sila = 6
-        self.obr = pygame.image.load('obrazky/zmensene14/pavouk.png')
+        self.obr = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/zmensene14/pavouk.png')
         self.obr.set_colorkey('#ffffff')
         self.dava = 'uzdraveni'
         super().__init__(x,y)
@@ -97,7 +97,7 @@ class Mumie(Potvora):
     def __init__(self,x,y):
         self.jmeno = 'mumie'
         self.sila = 7
-        self.obr = pygame.image.load('obrazky/zmensene14/mumie.png')
+        self.obr = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/zmensene14/mumie.png')
         self.obr.set_colorkey('#ffffff')
         self.dava = 'magicky_mec'
         super().__init__(x,y)
@@ -105,7 +105,7 @@ class Klicnik(Potvora):
     def __init__(self,x,y):
         self.jmeno = 'klíčník'
         self.sila = 8
-        self.obr = pygame.image.load('obrazky/zmensene14/klicnik.png')
+        self.obr = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/zmensene14/klicnik.png')
         self.obr.set_colorkey('#ffffff')
         self.dava = 'klic'
         super().__init__(x,y)
@@ -113,7 +113,7 @@ class Sermir(Potvora):
     def __init__(self,x,y):
         self.jmeno = 'šermíř'
         self.sila = 9
-        self.obr = pygame.image.load('obrazky/zmensene14/sermir.png')
+        self.obr = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/zmensene14/sermir.png')
         self.obr.set_colorkey('#ffffff')
         self.dava = 'mec'
         super().__init__(x,y)
@@ -121,7 +121,7 @@ class Sekernik(Potvora):
     def __init__(self,x,y):
         self.jmeno = 'sekerník'
         self.sila = 10
-        self.obr = pygame.image.load('obrazky/zmensene14/sekernik.png')
+        self.obr = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/zmensene14/sekernik.png')
         self.obr.set_colorkey('#ffffff')
         self.dava = 'sekera'
         super().__init__(x,y)
@@ -129,7 +129,7 @@ class Duch(Potvora):
     def __init__(self,x,y):
         self.jmeno = 'duch'
         self.sila = 12
-        self.obr = pygame.image.load('obrazky/zmensene14/duch.png')
+        self.obr = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/zmensene14/duch.png')
         self.obr.set_colorkey('#ffffff')
         self.dava = 'truhla'
         super().__init__(x,y)
@@ -137,7 +137,7 @@ class Drak(Potvora):
     def __init__(self,x,y):
         self.jmeno = 'drak'
         self.sila = 15
-        self.obr = pygame.image.load('obrazky/zmensene14/drak.png')
+        self.obr = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/zmensene14/drak.png')
         self.obr.set_colorkey('#ffffff')
         self.dava = 'truhla+'
         super().__init__(x,y)
@@ -146,7 +146,7 @@ class Truhla():
         self.pos = [x,y]
         self.jmeno = 'truhla'
         self.sila = '0'
-        self.obr = pygame.image.load('obrazky/zmensene30/truhla_zamcena.png')
+        self.obr = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/zmensene30/truhla_zamcena.png')
         self.obr.set_colorkey('#ffffff')
         self.dava = 'truhla'
     def nakresli(self):
@@ -171,25 +171,25 @@ class Hrdina:
         self.zdravi = 10
     def nakresli_stav(self):
         if self.predmety['klic']:
-            img = pygame.image.load('obrazky/klic.png')
+            img = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/klic.png')
             img.set_colorkey('#ffffff')
             screen.blit(img,(1060,154))
         for zbran in range(len(self.predmety['zbrane'])):
             if self.predmety['zbrane'][zbran] == 1:
-                img = pygame.image.load('obrazky/dyky.png')
+                img = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/dyky.png')
                 img.set_colorkey('#ffffff')
                 screen.blit(img,(1060,10+(zbran*70)))
             if self.predmety['zbrane'][zbran] == 2:
-                img = pygame.image.load('obrazky/mec.png')
+                img = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/mec.png')
                 img.set_colorkey('#ffffff')
                 screen.blit(img,(1060,10+(zbran*70)))
             if self.predmety['zbrane'][zbran] == 3:
-                img = pygame.image.load('obrazky/sekera.png')
+                img = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/sekera.png')
                 img.set_colorkey('#ffffff')
                 screen.blit(img,(1060,10+(zbran*70)))
         for kouzlo in range(len(self.predmety['kouzla'])):
             vec = self.predmety['kouzla'][kouzlo]
-            img = pygame.image.load(f'obrazky/{vec}.png')
+            img = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+f'/obrazky/{vec}.png')
             img.set_colorkey('#ffffff')
             screen.blit(img,(1150,10+(kouzlo*70)))
         font = pygame.font.SysFont('Arial',30)
