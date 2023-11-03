@@ -3,6 +3,7 @@
 import pygame
 import random
 import time
+import os
 
 #             [1]
 #pruchod = [0] X [2]
