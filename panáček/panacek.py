@@ -11,10 +11,10 @@ import datetime
 import os
 
 
-vsechny_mapy = glob.glob('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/mapy/*.json'.split('/')[-1])
+vsechny_mapy = glob.glob('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/mapy/*.json'.split('/'))
 vsechny_mapy.sort()
 for i in vsechny_mapy:
-    vsechny_mapy[vsechny_mapy.index(i)] = (vsechny_mapy[vsechny_mapy.index(i)])[5:-5]
+    vsechny_mapy[vsechny_mapy.index(i)] = (vsechny_mapy[vsechny_mapy.index(i)]).split('/')[-1][:-5]
 hack = False
 while True:
     print('Mas tyto mapy:',str(vsechny_mapy)[1:-1])
