@@ -1,7 +1,4 @@
 
-
-
-
 import time
 import pyglet
 import json
@@ -20,13 +17,13 @@ while True:
     print('Mas tyto mapy:',str(vsechny_mapy)[1:-1])
     nazev_mapy = input('Kterou chces hrat? ')
     try:
-        with open('mapy/'+nazev_mapy+'.json') as soubor:
+        with open('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/mapy/'+nazev_mapy+'.json') as soubor:
             slovnik = json.load(soubor)
             mapa = slovnik['mapa']
             startovni_pozice = slovnik['pozice']
         break
     except:
-        if nazev_mapy == 'a':
+        if nazev_mapy == 'hack':
             print('\n\nhacked version\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[P] : sebrat vsechny penize\n[O] : otevrit dvere\n[I] : reset casu\n[ space ] : vyhra\n')
             hack = True
 penize_celkem = 0
