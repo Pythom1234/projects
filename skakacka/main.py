@@ -1,4 +1,4 @@
-
+import os
 import pygame
 import glob
 import json
@@ -26,41 +26,43 @@ pygame.init()
 # vyska = 20
 # sirka = len(mapa[0])
 
-zed = pygame.image.load('obrazky/zed.png')
-bodaky = pygame.image.load('obrazky/bodaky.png')
+file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
+
+zed = pygame.image.load(file+'obrazky/zed.png')
+bodaky = pygame.image.load(file+'obrazky/bodaky.png')
 bodaky.set_colorkey('#ffffff')
-bodaky_shora = pygame.image.load('obrazky/bodaky_shora.png')
+bodaky_shora = pygame.image.load(file+'obrazky/bodaky_shora.png')
 bodaky_shora.set_colorkey('#ffffff')
-zpet = pygame.image.load('obrazky/zpet.png')
+zpet = pygame.image.load(file+'obrazky/zpet.png')
 zpet.set_colorkey('#ffffff')
-dal = pygame.image.load('obrazky/dal.png')
+dal = pygame.image.load(file+'obrazky/dal.png')
 dal.set_colorkey('#ffffff')
-editor = pygame.image.load('obrazky/editor.png')
+editor = pygame.image.load(file+'obrazky/editor.png')
 editor.set_colorkey('#ffffff')
-nic = pygame.image.load('obrazky/nic.png')
+nic = pygame.image.load(file+'obrazky/nic.png')
 nic.set_colorkey('#ffffff')
-fal_zed = pygame.image.load('obrazky/fales_zed.png')
+fal_zed = pygame.image.load(file+'obrazky/fales_zed.png')
 fal_zed.set_colorkey('#ffffff')
-zkusit = pygame.image.load('obrazky/zkusit.png')
+zkusit = pygame.image.load(file+'obrazky/zkusit.png')
 zkusit.set_colorkey('#ffffff')
-ulozit = pygame.image.load('obrazky/ulozit.png')
+ulozit = pygame.image.load(file+'obrazky/ulozit.png')
 ulozit.set_colorkey('#ffffff')
-editor_edit = pygame.image.load('obrazky/editor_editovat.png')
+editor_edit = pygame.image.load(file+'obrazky/editor_editovat.png')
 editor_edit.set_colorkey('#ffffff')
 hrac = []
 for i in range(5):
     if i == 2:
-        hrac.append(pygame.image.load(f'obrazky/hrac_21.png'))
+        hrac.append(pygame.image.load(file+f'obrazky/hrac_21.png'))
         hrac[-1].set_colorkey('#ffffff')
     elif i == 3:
-        hrac.append(pygame.image.load(f'obrazky/hrac_31.png'))
+        hrac.append(pygame.image.load(file+f'obrazky/hrac_31.png'))
         hrac[-1].set_colorkey('#ffffff')
     else:
-        hrac.append(pygame.image.load(f'obrazky/hrac_{i}.png'))
+        hrac.append(pygame.image.load(file+f'obrazky/hrac_{i}.png'))
         hrac[-1].set_colorkey('#ffffff')
 zmeny = []
 for i in range(5):
-    zmeny.append(pygame.image.load(f'obrazky/zmena_{i}.png'))
+    zmeny.append(pygame.image.load(file+f'obrazky/zmena_{i}.png'))
     zmeny[-1].set_colorkey('#ffffff')
 
 veci = [nic,zed,bodaky,bodaky_shora,fal_zed]
