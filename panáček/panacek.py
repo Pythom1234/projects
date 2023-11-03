@@ -11,7 +11,7 @@ import datetime
 import os
 
 
-vsechny_mapy = glob.glob('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/mapy/*.json'.split('/'))
+vsechny_mapy = glob.glob('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/mapy/*.json')
 vsechny_mapy.sort()
 for i in vsechny_mapy:
     vsechny_mapy[vsechny_mapy.index(i)] = (vsechny_mapy[vsechny_mapy.index(i)]).split('/')[-1][:-5]
