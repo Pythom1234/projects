@@ -567,7 +567,7 @@ def nakresli_vse():
         for x in range(len(mapa_veci[y])):
             vec = mapa_veci[y][x]
             if not vec == None:
-                img = pygame.image.load(f'obrazky/zmensene20/{vec}.png')
+                img = pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+f'/obrazky/zmensene20/{vec}.png')
                 img.set_colorkey('#ffffff')
                 screen.blit(img,(x*40+13,y*40+13))
     hrac.nakresli()
@@ -576,9 +576,9 @@ def nakresli_vse():
     pygame.draw.rect(screen,'#9a9996',pygame.Rect(1000,0,500,1000))
     zivot = -1
     for zivot in range(hrac.zdravi):
-        screen.blit(pygame.image.load('obrazky/srdce.png'),(1020,20+zivot*30))
+        screen.blit(pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/srdce.png'),(1020,20+zivot*30))
     for smrt in range(10-hrac.zdravi):
-        screen.blit(pygame.image.load('obrazky/lebka.png'),(1020,50+smrt*30+zivot*30))
+        screen.blit(pygame.image.load('/'.join(os.path.abspath(__file__).split('/')[:-1])+'/obrazky/lebka.png'),(1020,50+smrt*30+zivot*30))
     hrac.nakresli_stav()
 
 mapa_sezn = [
