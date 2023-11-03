@@ -194,11 +194,11 @@ while run:
                                             cekej -= 1
                                         if smer == 1:
                                             pos[1] += 2
-                                            hrac[typ] = pygame.image.load('obrazky/hrac_21.png')
+                                            hrac[typ] = pygame.image.load(file+'obrazky/hrac_21.png')
                                             hrac[typ].set_colorkey('#ffffff')
                                         elif smer == -1:
                                             pos[1] -= 2
-                                            hrac[typ] = pygame.image.load('obrazky/hrac_2-1.png')
+                                            hrac[typ] = pygame.image.load(file+'obrazky/hrac_2-1.png')
                                             hrac[typ].set_colorkey('#ffffff')
                                     if typ == 3:
                                         if cekej == 0 and (pygame.key.get_pressed()[pygame.K_UP] or pygame.key.get_pressed()[pygame.K_SPACE] or pygame.mouse.get_pressed()[0]):
@@ -210,14 +210,14 @@ while run:
                                         if cekej != 0:
                                             cekej -= 1
                                         if updown == 1:
-                                            hrac[typ] = pygame.image.load('obrazky/hrac_31.png')
+                                            hrac[typ] = pygame.image.load(file+'obrazky/hrac_31.png')
                                             hrac[typ].set_colorkey('#ffffff')
                                             if not (mapa[pos[1]//20][pos[0]//20-1] == 1 or mapa[pos[1]//20][pos[0]//20] == 1) and not pos[1] == 0:
                                                 pos[1] -= 9
                                             if mapa[pos[1]//20][pos[0]//20-1] == 1 or mapa[pos[1]//20][pos[0]//20] == 1 or mapa[pos[1]//20+1][pos[0]//20-1] == 1 or mapa[pos[1]//20+1][pos[0]//20] == 1:
                                                 pos[1] = round(pos[1]/20)*20
                                         elif updown == -1:
-                                            hrac[typ] = pygame.image.load('obrazky/hrac_3-1.png')
+                                            hrac[typ] = pygame.image.load(file+'obrazky/hrac_3-1.png')
                                             hrac[typ].set_colorkey('#ffffff')
                                             if not (mapa[pos[1]//20+1][pos[0]//20-1] == 1 or mapa[pos[1]//20+1][pos[0]//20] == 1):
                                                 pos[1] += 9
