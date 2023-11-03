@@ -1,6 +1,3 @@
-#!/usr/bin/python3
-#!venv/bin/python3
-'↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑'
 
 
 
