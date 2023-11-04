@@ -130,15 +130,15 @@ while run:
                                             napsano += i.unicode
                                         elif i.key == pygame.K_RETURN:
                                             try:
-                                                s = open('mapy/'+napsano+'.json','r')
+                                                s = open(file+'mapy/'+napsano+'.json','r')
                                                 s.close()
                                                 name_used = 200
                                             except:
-                                                with open('mapy/'+napsano+'.json','w') as s:
+                                                with open(file+'mapy/'+napsano+'.json','w') as s:
                                                     mapa.reverse()
                                                     s.write(json.dumps({'mapa':mapa}))
                                                     mapa.reverse()
-                                                    mapy = glob.glob('mapy/*.json')
+                                                    mapy = glob.glob(file+'mapy/*.json')
                                                     runx = False
                                         elif i.key == pygame.K_BACKSPACE:
                                             napsano = napsano[:-1]
@@ -454,15 +454,15 @@ while run:
                                             napsano += i.unicode
                                         elif i.key == pygame.K_RETURN:
                                             try:
-                                                s = open('mapy/'+napsano+'.json','r')
+                                                s = open(file+'mapy/'+napsano+'.json','r')
                                                 s.close()
                                                 name_used = 200
                                             except:
-                                                with open('mapy/'+napsano+'.json','w') as s:
+                                                with open(file+'mapy/'+napsano+'.json','w') as s:
                                                     mapa.reverse()
                                                     s.write(json.dumps({'mapa':mapa}))
                                                     mapa.reverse()
-                                                    mapy = glob.glob('mapy/*.json')
+                                                    mapy = glob.glob(file+'mapy/*.json')
                                                     runx = False
                                         elif i.key == pygame.K_BACKSPACE:
                                             napsano = napsano[:-1]
