@@ -77,31 +77,31 @@ import numpy
 import asyncio
 import json
 pygame.init()
-
+file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
 obrazky = {
-'l': pygame.image.load('obrazky/liska.png'),
-'me': pygame.image.load('obrazky/medved.png'),
-'d': pygame.image.load('obrazky/drevorubec.png'),
-'my0': pygame.image.load('obrazky/myslivec0.png'),
-'my1': pygame.image.load('obrazky/myslivec1.png'),
-'my2': pygame.image.load('obrazky/myslivec2.png'),
-'my3': pygame.image.load('obrazky/myslivec3.png'),
-'k': pygame.image.load('obrazky/kachna.png'),
-'b': pygame.image.load('obrazky/bazant.png'),
-'s1': pygame.image.load('obrazky/strom1.png'),
-'s2': pygame.image.load('obrazky/strom2.png'),
-'lv': pygame.image.load('obrazky/liska_v.png'),
-'mev': pygame.image.load('obrazky/medved_v.png'),
-'dv': pygame.image.load('obrazky/drevorubec_v.png'),
-'my0v': pygame.image.load('obrazky/myslivec0_v.png'),
-'my1v': pygame.image.load('obrazky/myslivec1_v.png'),
-'my2v': pygame.image.load('obrazky/myslivec2_v.png'),
-'my3v': pygame.image.load('obrazky/myslivec3_v.png'),
-'kv': pygame.image.load('obrazky/kachna_v.png'),
-'bv': pygame.image.load('obrazky/bazant_v.png'),
-'p': pygame.image.load('obrazky/plan.png'),
-'.': pygame.image.load('obrazky/prazdne.png'),
-'m': pygame.image.load('obrazky/muze.png')
+'l': pygame.image.load(file+'obrazky/liska.png'),
+'me': pygame.image.load(file+'obrazky/medved.png'),
+'d': pygame.image.load(file+'obrazky/drevorubec.png'),
+'my0': pygame.image.load(file+'obrazky/myslivec0.png'),
+'my1': pygame.image.load(file+'obrazky/myslivec1.png'),
+'my2': pygame.image.load(file+'obrazky/myslivec2.png'),
+'my3': pygame.image.load(file+'obrazky/myslivec3.png'),
+'k': pygame.image.load(file+'obrazky/kachna.png'),
+'b': pygame.image.load(file+'obrazky/bazant.png'),
+'s1': pygame.image.load(file+'obrazky/strom1.png'),
+'s2': pygame.image.load(file+'obrazky/strom2.png'),
+'lv': pygame.image.load(file+'obrazky/liska_v.png'),
+'mev': pygame.image.load(file+'obrazky/medved_v.png'),
+'dv': pygame.image.load(file+'obrazky/drevorubec_v.png'),
+'my0v': pygame.image.load(file+'obrazky/myslivec0_v.png'),
+'my1v': pygame.image.load(file+'obrazky/myslivec1_v.png'),
+'my2v': pygame.image.load(file+'obrazky/myslivec2_v.png'),
+'my3v': pygame.image.load(file+'obrazky/myslivec3_v.png'),
+'kv': pygame.image.load(file+'obrazky/kachna_v.png'),
+'bv': pygame.image.load(file+'obrazky/bazant_v.png'),
+'p': pygame.image.load(file+'obrazky/plan.png'),
+'.': pygame.image.load(file+'obrazky/prazdne.png'),
+'m': pygame.image.load(file+'obrazky/muze.png')
 }
 obrazky['m'].set_colorkey('#ffffff')
 
