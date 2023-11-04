@@ -76,6 +76,7 @@ import random
 import numpy
 import asyncio
 import json
+import os
 pygame.init()
 file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
 obrazky = {
