@@ -1,1 +1,1 @@
-pygame pyopengl pyopengl-accelerate
+pygame pyopengl pyopengl-accelerate numpy
