@@ -8,7 +8,6 @@ import tkinter.messagebox
 import tkinter.filedialog
 import tkinter.colorchooser
 import numpy                                 #numpy
-import io
 import datetime
 import sys
 
