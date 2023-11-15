@@ -61,7 +61,6 @@ def draw_sceny():
                 tkscena2_canvas.image = img3
     except:
         pass
-    print(vybrana_scena)
     tkroot.after(1,draw_sceny)
 
 def save_sceny():
