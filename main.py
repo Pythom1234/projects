@@ -51,7 +51,7 @@ def draw_sceny():
         pass
     try:
         img2 = draw_camera(vybrana_scena)
-        kresleni = sceny[tksceny_listbox.curselection()[0]]['kresleni']
+        kresleni = sceny[vybrana_scena]['kresleni']
         img2.paste(kresleni, (0, 0), kresleni)
         if pustene:
             img3 = ImageTk.PhotoImage(img2)
@@ -61,6 +61,7 @@ def draw_sceny():
                 tkscena2_canvas.image = img3
     except:
         pass
+    print(vybrana_scena)
     tkroot.after(1,draw_sceny)
 
 def save_sceny():
