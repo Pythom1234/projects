@@ -181,6 +181,12 @@ def set_color(a=''):
     tka_entry.delete(0, tk.END)
     tka_entry.insert(0, tka_scale.get())
 
+def save_img(a=''):
+    sceny[tksceny_listbox.curselection()[0]]['kresleni'].save(tkinter.filedialog.asksaveasfilename(initialfile='image.png',initialdir='~',defaultextension='.png'))
+
+def load_img(a=''):
+    sceny[tksceny_listbox.curselection()[0]]['kresleni'] = Image.open(tkinter.filedialog.askopenfilename(initialdir='~',filetypes=[('PNG','*.png')]))
+    sceny[tksceny_listbox.curselection()[0]]['kresleni'] = sceny[vybrana_scena]['kresleni'].resize((640,480))
 
 
 frames = []
@@ -205,6 +211,8 @@ tk.Button(tksceny_canvas,text='+',command=add_scene).pack()
 
 tkmenu1_canvas = tk.Canvas(tkroot)
 tk.Button(tkmenu1_canvas,text='nastavit kameru (a)',command=add_camera).pack()
+tk.Button(tkmenu1_canvas,text='uložit obrázek (c)',command=save_img).pack()
+tk.Button(tkmenu1_canvas,text='načíst obrázek (v)',command=load_img).pack()
 tksave_button = tk.Button(tkmenu1_canvas,text='uložit (s)',command=save)
 tksave_button.pack()
 
@@ -266,6 +274,8 @@ tkroot.bind('<r>',save_images17)
 tkroot.bind('<z>',del_frame)
 tkroot.bind('<x>',del_frames17)
 tkroot.bind('<f>',clear_draw)
+tkroot.bind('<c>',save_img)
+tkroot.bind('<v>',load_img)
 tkscena1_canvas.bind('<B1-Motion>',draw)
 tkscena1_canvas.bind('<ButtonRelease-1>',end_draw)
 
