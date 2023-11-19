@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 
 import cv2                                   #opencv-python
 import tkinter as tk
