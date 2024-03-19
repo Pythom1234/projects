@@ -1,0 +1,19 @@
+# name x y z data
+#
+# x,y,z: int value
+#
+# name:   a - normal block
+#         b - ladder
+#         c - electricity
+#         d - button
+#         e - enemy
+#         f - item
+#         g - sign
+#
+# data:   a - type
+#         b - rotation (0,1,2,3)
+#         c - signal (eg. power123off)
+#         d - signal (eg. power123off)
+#         e - type
+#         f - type
+#         g - text
