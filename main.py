@@ -40,7 +40,7 @@ if os.name == 'posix':
             b4.grid(row=3,column=2)
         else:
             #b4.destroy()
-            b4.widget.grid_forget()
+            b4.grid_forget()
 
     b4 = None
 
