@@ -26,7 +26,6 @@ if os.name == 'posix':
         with open(l1.get(l1.curselection()[0])+'/req') as s:
             req = s.read()
         os.system(f'source ~/.pydownload/venv/bin/activate; python3 -m pip install {req}')
-        b4 = tkinter.Button(text='Spustit',command=b3)
         b4.grid(row=3,column=2)
 
     def b3():
@@ -52,6 +51,7 @@ if os.name == 'posix':
         if not i == '':
             l1.insert('end',i)
     b1 = tkinter.Button(text='Nainstalovat',command=b2)
+    b4 = tkinter.Button(text='Spustit',command=b3)
     b1.grid(row=2,column=2)
     l1.grid(row=2,column=1)
     l1.bind('<ButtonRelease-1>', c1)
