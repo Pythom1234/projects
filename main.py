@@ -36,7 +36,6 @@ if os.name == 'posix':
     def c1(c):
         global b4
         if os.path.expanduser('~') + '/.pydownload/' + l1.get(l1.curselection()[0]) in glob.glob(os.path.expanduser('~')+'/.pydownload/*'):
-            #b4 = tkinter.Button(text='Spustit',command=b3)
             b4.grid(row=3,column=2)
         else:
             #b4.destroy()
