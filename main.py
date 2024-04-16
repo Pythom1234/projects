@@ -3,9 +3,10 @@ import glob
 import os
 
 if not os.name == 'posix':
-    raise EnvironmentError('this program is only for linux')
+    raise EnvironmentError('linux only')
 
 def download(name):
+    delete(name)
     with open('includes',mode='r') as s:
         dirs = s.read().split('\n')
     with open('includes',mode='a') as s:
@@ -25,7 +26,16 @@ def run(name):
         run = s.read()
     os.system(f"""konsole --hold -e 'bash -c "source ~/.pydownload/venv/bin/activate; python3 ~/.pydownload/{run}"'""")
 
-def delete():
+def delete(name):
+    with open('includes',mode='r') as s:
+        dirs = s.read().replace(name,'')
+    with open('includes',mode='w') as s:
+        s.write(dirs)
+    name = name.split('==')[0]
+    os.system(f'rm -rf {name}')
+    prepare()
+
+def delete_all():
     os.chdir(os.path.expanduser('~'))
     os.system('rm -rf .pydownload')
     exit()
@@ -41,17 +51,23 @@ def get_func_for_download(name):
 def get_func_for_run(name):
     return lambda: run(name)
 
+def get_func_for_delete(name):
+    return lambda: delete(name)
+
 def prepare():
-    global tk_downloads, tk_labels, tk_runs
+    global tk_downloads, tk_labels, tk_runs, tk_deletes
     for i in tk_downloads:
         i.destroy()
     for i in tk_labels:
         i.destroy()
     for i in tk_runs:
         i.destroy()
+    for i in tk_deletes:
+        i.destroy()
     tk_downloads = []
     tk_labels = []
     tk_runs = []
+    tk_deletes = []
     with open('includes') as s:
         dirs = s.read()
     for i in includes:
@@ -69,6 +85,8 @@ def prepare():
                 tk_downloads[-1].grid(row=includes.index(i),column=1)
                 tk_runs.append(tkinter.Button(text='Spustit',command=get_func_for_run(i.split('==')[0])))
                 tk_runs[-1].grid(row=includes.index(i),column=2)
+                tk_deletes.append(tkinter.Button(text='Smazat',command=get_func_for_delete(i)))
+                tk_deletes[-1].grid(row=includes.index(i),column=3)
 
 try:
     os.chdir(os.path.expanduser('~')+'/.pydownload')
@@ -93,12 +111,13 @@ if not 'includes' in glob.glob('*'):
 tk_labels = []
 tk_downloads = []
 tk_runs = []
+tk_deletes = []
 
 root = tkinter.Tk()
 
 menu_bar = tkinter.Menu(root)
 menu = tkinter.Menu(menu_bar, tearoff=0)
-menu.add_command(label='Vyčistit paměť (automaticky ukončí)',command=delete)
+menu.add_command(label='Vyčistit paměť (automaticky ukončí)',command=delete_all)
 menu.add_command(label='Nainstalovat vše (pomalé)',command=install_all)
 menu_bar.add_cascade(label='Možnosti', menu=menu)
 
@@ -107,4 +126,3 @@ root.config(menu=menu_bar)
 prepare()
 
 root.mainloop()
-
