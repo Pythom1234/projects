@@ -114,6 +114,7 @@ tk_runs = []
 tk_deletes = []
 
 root = tkinter.Tk()
+root.title('Stáhnout projekty')
 
 menu_bar = tkinter.Menu(root)
 menu = tkinter.Menu(menu_bar, tearoff=0)
