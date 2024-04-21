@@ -1311,6 +1311,7 @@ def reset_game_over():
     reload_map(selected_map)
     destroy(tmp1)
     destroy(tmp2)
+    set_game_state_normal()
 
 def game_over():
     global game_state, tmp1, tmp2
