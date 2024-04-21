@@ -8,6 +8,7 @@ class Viking(Entity):
         super().__init__(model='assets/models/viking.obj',y=1,color=(1,1,1,1),**kwargs)
         #self.collider = BoxCollider(self,(0,1,0),(1,2,1))
         self.feet = Entity(parent=self,visible=False,model='cube',y=.05,scale=(.5,.1,.5))
+        self.head = Entity(parent=self,visible=False,model='cube',y=1.95,scale=(.5,.1,.5))
         self.air_time = 0
         self._active = False
         self.pivot = Entity(parent=self,y=1.8)
@@ -21,7 +22,7 @@ class Viking(Entity):
         self.in_exit = False
         self.inventory = {'1':None,'2':None,'3':None,'4':None}
         self.inventory_selected = '1'
-        self.type = 'VIKING'
+        self.jumping = 0
     def reduce_lives(self,lives):
         self.lives -= lives
         if self._active:
@@ -62,6 +63,12 @@ class Viking(Entity):
             self.collider = None
     def update(self):
         if self.lives > 0:
+            if self.animations and raycast(self.head.world_position,direction=self.up,ignore=[shield,self,exit_entity] + objs_not_collides + acids + [player.erik,player.olaf,player.baleog],distance=.2).hit:
+                try:
+                    for i in self.animations:
+                        i.kill()
+                except:
+                    pass
             if shield.is_up:
                 ignore = [self.feet,self,exit_entity] + objs_not_collides + acids + [player.erik,player.olaf,player.baleog] + enemies
             else:
@@ -70,14 +77,14 @@ class Viking(Entity):
             if self.suspended_gravity == 0:
                 if not hit_info_feet.hit:
                     if self.normal_gravity:
-                        self.y -= min(self.air_time / 70, raycast(self.feet.world_position,direction=self.down,ignore=ignore).distance)
-                        self.air_time += 30 * time.dt
+                        self.y -= min((self.air_time / 1000) * 100 * time.dt, raycast(self.feet.world_position,direction=self.down,ignore=ignore).distance - 0.1)
+                        self.air_time += (.25 * time.dt) * 1000
                         self.grounded = False
                     else:
                         self.y -= .08
                         self.air_time = 0
                 else:
-                    if self.air_time > 50:
+                    if self.air_time > 270 and not hit_info_feet.entity.type == 'k':
                         self.reduce_lives(1)
                     self.air_time = 0
                     self.grounded = True
@@ -86,6 +93,19 @@ class Viking(Entity):
                     hit_info_feet.entity.h_stand()
             except:
                 pass
+            try:
+                if hit_info_feet.entity.type == 'k' and self.jumping < 0:
+                    if self.type == 'ERIK' and held_keys['SPACE']:
+                        self.animate_y(value=self.y+9.5,duration=.6,resolution=int(1//time.dt),curve=curve.out_circ)
+                        hit_info_feet.entity.k_stand()
+                        self.jumping = 10
+                    else:
+                        self.animate_y(value=self.y+6,duration=.6,resolution=int(1//time.dt),curve=curve.out_circ)
+                        hit_info_feet.entity.k_stand()
+                        self.jumping = 10
+            except:
+                pass
+            self.jumping -= 1
             try:
                 ladders_distances = []
                 for i in objs_not_collides:
@@ -151,7 +171,7 @@ class Viking(Entity):
                         move_amount[2] = max(move_amount[2], 0)
                     self.position += move_amount
     def input(self,key):
-        if key == 'E':
+        if key == 'E' and self.active:
             item = self.inventory[self.inventory_selected]
             used = False
             if item == 'a':
@@ -163,6 +183,12 @@ class Viking(Entity):
             if item == 'f':
                 if self.lives < 3:
                     self.lives += 1
+                    used = True
+                else:
+                    used = False
+            if item == 'fa':
+                if self.type == 'BALEOG':
+                    self.fire_arrow = True
                     used = True
                 else:
                     used = False
@@ -181,13 +207,17 @@ class Viking(Entity):
             camera.position = (0,0,0)
 
 class Arrow(Entity):
-    def __init__(self,rotation,position,**kwargs):
-        super().__init__(self,texture='assets/textures/arrow.png',model='assets/models/arrow.obj',double_sided=True,**kwargs)
+    def __init__(self,rotation,position,fire,**kwargs):
+        tmp = 'fire_' if fire else ''
+        super().__init__(self,texture=f'assets/textures/{tmp}arrow.png',model='assets/models/arrow.obj',double_sided=True,**kwargs)
         self.position = position
         self.rotation = rotation
+        if fire:
+            self.scale = 2
         self.time_live = 0
+        self.fire = fire
         self.collider = BoxCollider(self,(0,0,0),(.1,.1,1))
-        self.type = ''
+        self.type = 'ARROW'
         self.speed = .5
         self.time_not_moving = 0
         random_deviation = .001
@@ -203,6 +233,8 @@ class Arrow(Entity):
                     hit_info.entity.d_press()
                 if hit_info.entity and hit_info.entity.type == 'e':
                     hit_info.entity.hit()
+                    if self.fire:
+                        hit_info.entity.kill()
                     destroy(self)
                     return
                 if hit_info.hit:
@@ -243,21 +275,16 @@ class Erik(Viking):
         super().__init__()
         self.speed = 7
         self.texture = 'assets/textures/erik.png'
-        self.head = Entity(parent=self,visible=False,model='cube',y=1.95,scale=(.5,.1,.5))
+        self.type = 'ERIK'
     def update(self):
-        self.head.collider = BoxCollider(self.head,(0,0,0),(1,2,1))
-        if self.animations and raycast(self.head.world_position,direction=self.up,ignore=[shield,self,self.head,exit_entity] + objs_not_collides + acids + [player.erik,player.olaf,player.baleog],distance=.2).hit:
-            try:
-                self.animations[0].kill()
-            except:
-                pass
-        self.head.collider = None
-        super().update()
+        if game_state == 1:
+            super().update()
     def input(self,key):
-        if key == 'SPACE' and self.active and not self.ladder < 1.8:
-            if self.grounded:
-                self.animate_y(value=self.y+3.5,duration=.6,resolution=int(1//time.dt),curve=curve.out_circ)
-        super().input(key)
+        if game_state == 1:
+            if key == 'SPACE' and self.active and not self.ladder < 1.8:
+                if self.grounded:
+                    self.animate_y(value=self.y+3.5,duration=.6,resolution=int(1//time.dt),curve=curve.out_circ)
+            super().input(key)
 
 class Olaf(Viking):
     def __init__(self):
@@ -267,29 +294,32 @@ class Olaf(Viking):
         self.shield_up = False
         shield = Entity(type='SHIELD',is_up=False,parent=self,model='assets/models/shield.obj',texture='assets/textures/shield.png',color=(1,1,1,.5),position=(0,.9,.6))
         shield.collider = BoxCollider(shield,(0,0,0),(1.5,1.5,.3))
+        self.type = 'OLAF'
     def update(self):
-        if self.active:
-            shield.color = (1,1,1,.5)
-        else:
-            shield.color = (1,1,1,1)
-        if self.lives == 0:
-            self.shield_up = False
-            shield.visible = False
-            shield.position = (9999,9999,9999)
-        shield.is_up = self.shield_up
-        if self.shield_up:
-            shield.rotation_x = -90
-            shield.position = (0,2.1,0)
-            self.normal_gravity = False
-        else:
-            shield.rotation_x = 0
-            shield.position = (0,.9,.5)
-            self.normal_gravity = True
-        super().update()
+        if game_state == 1:
+            if self.active:
+                shield.color = (1,1,1,.5)
+            else:
+                shield.color = (1,1,1,1)
+            if self.lives == 0:
+                self.shield_up = False
+                shield.visible = False
+                shield.position = (9999,9999,9999)
+            shield.is_up = self.shield_up
+            if self.shield_up:
+                shield.rotation_x = -90
+                shield.position = (0,2.1,0)
+                self.normal_gravity = False
+            else:
+                shield.rotation_x = 0
+                shield.position = (0,.9,.5)
+                self.normal_gravity = True
+            super().update()
     def input(self,key):
-        if key == 'SPACE' and self.active and not self.ladder < 1.8:
-            self.shield_up = not self.shield_up
-        super().input(key)
+        if game_state == 1:
+            if key == 'SPACE' and self.active and not self.ladder < 1.8:
+                self.shield_up = not self.shield_up
+            super().input(key)
 
 class Baleog(Viking):
     def __init__(self):
@@ -298,39 +328,43 @@ class Baleog(Viking):
         self.tensioning = False
         self.tension = 0
         self.chopping = 0
+        self.fire_arrow = False
         self.bow = Entity(parent=self.pivot,texture='assets/textures/bow0.png',always_on_top=False,model='assets/models/bow.obj',color=(1,1,1,1),double_sided=True)
+        self.type = 'BALEOG'
     def update(self):
-        self.chopping -= 1
-        if self.tensioning and self.active:
-            self.tension += time.dt * 50
-        if self.tensioning or self.chopping > 10:
-            self.speed = 0
-        else:
-            self.speed = 5
-        if not self.active:
-            self.tensioning = False
-            self.tension = 0
-        self.bow.texture = f'assets/textures/bow{int(clamp(self.tension / 15,0,3))}.png'
-        if self.active:
-            self.bow.always_on_top = True
-            self.bow.visible = True
-        else:
-            self.bow.always_on_top = False
-            self.bow.visible = False
-        super().update()
+        if game_state == 1:
+            self.chopping -= 1
+            if self.tensioning and self.active:
+                self.tension += time.dt * 50
+            if self.tensioning or self.chopping > 10:
+                self.speed = 0
+            else:
+                self.speed = 5
+            if not self.active:
+                self.tensioning = False
+                self.tension = 0
+            self.bow.texture = f'assets/textures/bow{int(clamp(self.tension / 15,0,3))}.png'
+            if self.active:
+                self.bow.always_on_top = True
+                self.bow.visible = True
+            else:
+                self.bow.always_on_top = False
+                self.bow.visible = False
+            super().update()
     def input(self,key):
-        if key == 'ACTION1':
-            self.tensioning = True
-        if key == 'ACTION2':
-            if self.tension > 50:
-                arrows.append(Arrow(camera.world_rotation,camera.world_position + camera.forward))
-            self.tensioning = False
-            self.tension = 0
-        if self.active:
-            if key == 'SPACE' and not self.tensioning and self.chopping < 0:
-                Sword(parent=self,position=(0,.5,0))
-                self.chopping = 25
-        super().input(key)
+        if game_state == 1:
+            if key == 'ACTION1':
+                self.tensioning = True
+            if key == 'ACTION2':
+                if self.tension > 50:
+                    arrows.append(Arrow(camera.world_rotation,camera.world_position + camera.forward,self.fire_arrow))
+                self.tensioning = False
+                self.tension = 0
+            if self.active:
+                if key == 'SPACE' and not self.tensioning and self.chopping < 0:
+                    Sword(parent=self,position=(0,.5,0))
+                    self.chopping = 25
+            super().input(key)
 
 class Player(Entity):
     def __init__(self):
@@ -344,44 +378,45 @@ class Player(Entity):
         camera.fov = 90
         self.cursor = Sprite('assets/textures/cursor.png',parent=camera.ui,ppu=600)
     def update(self):
-        if self.erik.lives == -1:
-            self.erik.live = False
-            self.erik.lives = 0
-            self.erik.model = None
-            self.erik.inventory = {'1':None,'2':None,'3':None,'4':None}
-            if self.erik.active:
-                self.next_viking()
-        if self.olaf.lives == -1:
-            self.olaf.live = False
-            self.olaf.lives = 0
-            self.olaf.model = None
-            self.olaf.inventory = {'1':None,'2':None,'3':None,'4':None}
-            if self.olaf.active:
-                self.next_viking()
-        if self.baleog.lives == -1:
-            self.baleog.live = False
-            self.baleog.lives = 0
-            self.baleog.model = None
-            self.baleog.inventory = {'1':None,'2':None,'3':None,'4':None}
-            if self.baleog.active:
-                self.next_viking()
-        t = dedent(f'''\
-        Erik: <red>x {round(self.erik.x,3)}<default>, <cyan>y {round(self.erik.y,3)}<default>, <green>z {round(self.erik.z,3)}<default>, <yellow>lives {self.erik.lives}<default>, <magenta>air time {round(self.erik.air_time)}<default>{', <blue>on the floor' if self.erik.grounded else ''}<default>
-        Olaf: <red>x {round(self.olaf.x,3)}<default>, <cyan>y {round(self.olaf.y,3)}<default>, <green>z {round(self.olaf.z,3)}<default>, <yellow>lives {self.olaf.lives}<default>, <magenta>air time {round(self.olaf.air_time)}<default>{', <blue>on the floor' if self.olaf.grounded else ''}<default>
-        Baleog: <red>x {round(self.baleog.x,3)}<default>, <cyan>y {round(self.baleog.y,3)}<default>, <green>z {round(self.baleog.z,3)}<default>, <yellow>lives {self.baleog.lives}<default>, <magenta>air time {round(self.baleog.air_time)}<default>{', <blue>on the floor' if self.baleog.grounded else ''}<default>
-        objects: <gray>{len(objs)+len(objs_not_collides)+len(acids)}<default>
-        ''')
-        if self.erik.live == False:
-            t = t.replace('Erik','<dark_gray>Erik<default>')
-        if self.olaf.live == False:
-            t = t.replace('Olaf','<dark_gray>Olaf<default>')
-        if self.baleog.live == False:
-            t = t.replace('Baleog','<dark_gray>Baleog<default>')
-        if debug_text.visible:
-            debug_text.text = t
-            debug_text.create_background()
-        if self.erik.in_exit and self.olaf.in_exit and self.baleog.in_exit:
-            win()
+        if game_state == 1:
+            if self.erik.lives == -1:
+                self.erik.live = False
+                self.erik.lives = 0
+                self.erik.model = None
+                self.erik.inventory = {'1':None,'2':None,'3':None,'4':None}
+                if self.erik.active:
+                    self.next_viking()
+            if self.olaf.lives == -1:
+                self.olaf.live = False
+                self.olaf.lives = 0
+                self.olaf.model = None
+                self.olaf.inventory = {'1':None,'2':None,'3':None,'4':None}
+                if self.olaf.active:
+                    self.next_viking()
+            if self.baleog.lives == -1:
+                self.baleog.live = False
+                self.baleog.lives = 0
+                self.baleog.model = None
+                self.baleog.inventory = {'1':None,'2':None,'3':None,'4':None}
+                if self.baleog.active:
+                    self.next_viking()
+            t = dedent(f'''\
+            Erik: <red>x {round(self.erik.x,3)}<default>, <cyan>y {round(self.erik.y,3)}<default>, <green>z {round(self.erik.z,3)}<default>, <yellow>lives {self.erik.lives}<default>, <magenta>air time {round(self.erik.air_time)}<default>{', <blue>on the floor' if self.erik.grounded else ''}<default>
+            Olaf: <red>x {round(self.olaf.x,3)}<default>, <cyan>y {round(self.olaf.y,3)}<default>, <green>z {round(self.olaf.z,3)}<default>, <yellow>lives {self.olaf.lives}<default>, <magenta>air time {round(self.olaf.air_time)}<default>{', <blue>on the floor' if self.olaf.grounded else ''}<default>
+            Baleog: <red>x {round(self.baleog.x,3)}<default>, <cyan>y {round(self.baleog.y,3)}<default>, <green>z {round(self.baleog.z,3)}<default>, <yellow>lives {self.baleog.lives}<default>, <magenta>air time {round(self.baleog.air_time)}<default>{', <blue>on the floor' if self.baleog.grounded else ''}<default>
+            objects: <gray>{len(objs)+len(objs_not_collides)+len(acids)}<default>
+            ''')
+            if self.erik.live == False:
+                t = t.replace('Erik','<dark_gray>Erik<default>')
+            if self.olaf.live == False:
+                t = t.replace('Olaf','<dark_gray>Olaf<default>')
+            if self.baleog.live == False:
+                t = t.replace('Baleog','<dark_gray>Baleog<default>')
+            if debug_text.visible:
+                debug_text.text = t
+                debug_text.create_background()
+            if self.erik.in_exit and self.olaf.in_exit and self.baleog.in_exit:
+                win()
     def set_active(self,viking):
         self.erik.active = False
         self.olaf.active = False
@@ -415,19 +450,20 @@ class Player(Entity):
         self.set_active(self.active)
     def input(self,key):
         global inventory_timer
-        if key == 'NEXT':
-            self.next_viking()
-        if key == 'DEBUG':
-            debug_text.visible = not debug_text.visible
-        if key == 'CMD':
-            application.pause()
-            Cmd()
-        if key == 'INVENTORY' and inventory_timer < 1:
-            inventory_timer = 10
-            application.pause()
-            vikings_images.inventory_enable()
-        if key == 'ESC':
-            game_over()
+        if game_state == 1:
+            if key == 'NEXT':
+                self.next_viking()
+            if key == 'DEBUG':
+                debug_text.visible = not debug_text.visible
+            if key == 'CMD':
+                application.pause()
+                Cmd()
+            if key == 'INVENTORY' and inventory_timer < 1:
+                inventory_timer = 10
+                application.pause()
+                vikings_images.inventory_enable()
+            if key == 'ESC':
+                game_over()
     def for_all(self,command):
         exec(f'self.erik.{command}')
         exec(f'self.olaf.{command}')
@@ -435,12 +471,13 @@ class Player(Entity):
     def restart(self):
         shield.visible = True
         shield.is_up = False
-        self.for_all('position = (0,1,0)') ## TODO udelat neco se startovni pozici
+        # self.for_all('position = (0,1,0)')
         self.for_all('rotation = (0,0,0)')
         self.for_all('pivot.rotation = (0,0,0)')
         self.for_all('visible = True')
         self.for_all('lives = 3')
         self.for_all('live = True')
+        self.for_all('in_exit = False')
         self.for_all("inventory_selected = '1'")
         self.for_all("model='assets/models/viking.obj'")
         self.for_all("inventory = {'1':None,'2':None,'3':None,'4':None}")
@@ -519,41 +556,51 @@ class E(Entity):
             self.signal = self.data.split(',')[1]
             super().__init__(model=f'assets/models/small.obj',texture=f'assets/textures/keyhole{self.type_color}.png',collider=None,**kwargs)
             self.collider = BoxCollider(self,(0,0,0),(.5,.5,.5))
+        if self.type == 'k':
+            super().__init__(model=f'assets/models/slime0.obj',texture=f'assets/textures/slime.png',collider=None,**kwargs)
+            self.collider = BoxCollider(self,(0,0,0),(2,2,2))
+            self.change_to_normal = 0
         self.id = max_id
         max_id += 1
         self.name = str(self.id)
     def update(self):
-        if self.type == 'c':
-            if self.timer < 0:
-                self.t += 1
-                if self.t == 3:
-                    self.t = 0
-                self.texture = f'assets/textures/acid{self.t}.png'
-                self.timer = 5
-        if self.type == 'd':
-            if self.timer < 0:
-                self.color = color.rgb(255,255,255)
-            if self in mouse_entities and distance(self,camera) < 2.2:
-                self.alpha = 0.5
-            else:
-                self.alpha = 1
-        if self.type == 'g':
-            if self in mouse_entities:
-                self.tooltip.enabled = True
-                self.alpha = 0.5
-            else:
-                self.tooltip.enabled = False
-                self.alpha = 1
-        if self.type == 'h':
-            self.fall_after -= 1
-            if self.fall_after == 0:
-                destroy(self)
-                return
-        self.timer -= 1
+        if game_state == 1:
+            if self.type == 'c':
+                if self.timer < 0:
+                    self.t += 1
+                    if self.t == 3:
+                        self.t = 0
+                    self.texture = f'assets/textures/acid{self.t}.png'
+                    self.timer = 5
+            if self.type == 'd':
+                if self.timer < 0:
+                    self.color = color.rgb(255,255,255)
+                if self in mouse_entities and distance(self,camera) < 2.2:
+                    self.alpha = 0.5
+                else:
+                    self.alpha = 1
+            if self.type == 'g':
+                if self in mouse_entities:
+                    self.tooltip.enabled = True
+                    self.alpha = 0.5
+                else:
+                    self.tooltip.enabled = False
+                    self.alpha = 1
+            if self.type == 'h':
+                self.fall_after -= 1
+                if self.fall_after == 0:
+                    destroy(self)
+                    return
+            if self.type == 'k':
+                self.change_to_normal -= 1
+                if self.change_to_normal == 0:
+                    self.model = 'assets/models/slime0.obj'
+            self.timer -= 1
     def input(self,key):
-        if self.type == 'd':
-            if self in mouse_entities and distance(self,camera) < 2.2 and key == 'PRESS':
-                self.d_press()
+        if game_state == 1:
+            if self.type == 'd':
+                if self in mouse_entities and distance(self,camera) < 2.2 and key == 'PRESS':
+                    self.d_press()
     def d_press(self):
         self.color = (.2,.1,.1,1)
         self.timer = 10
@@ -565,6 +612,9 @@ class E(Entity):
             self.fall_after = 40
     def j_open(self):
         signal_send(self.signal)
+    def k_stand(self):
+        self.model = 'assets/models/slime1.obj'
+        self.change_to_normal = 10
     def check_signal(self,signal):
         if self.signal == signal:
             destroy(self)
@@ -645,6 +695,11 @@ class Enemy(Entity):
         if self.lives == 0:
             destroy(self)
             del enemies[enemies.index(self)]
+    def kill(self):
+        global enemies
+        self.lives = 0
+        destroy(self)
+        del enemies[enemies.index(self)]
     def shoot(self,if_player):
         if self.will_shoot and self.will_shoot_after < 0:
             if if_player:
@@ -680,22 +735,23 @@ class Enemy(Entity):
         lasers.append(Laser(position=self.position + (0,.5,0),rotation=self.rotation + (0,180,0)))
         lasers.append(Laser(position=self.position + (0,.5,0),rotation=self.rotation + (0,270,0)))
     def update_internal(self):
-        self.will_shoot_after -= 1
-        self.shoot_timer -= 1
-        self.hit_info = raycast(self.position + (0,.5,0),self.forward,ignore=[self] + lasers)
-        if not raycast(self.position,self.down,distance=.15,ignore=[self]).hit:
-            self.in_air = True
-            self.y -= .1
-        else:
-            self.in_air = False
-        if 'm' in self.rule:
-            self.move(False)
-        if 'M' in self.rule:
-            self.move(True)
-        if 's' in self.rule:
-            self.shoot(False)
-        if 'S' in self.rule:
-            self.shoot(True)
+        if game_state == 1:
+            self.will_shoot_after -= 1
+            self.shoot_timer -= 1
+            self.hit_info = raycast(self.position + (0,.5,0),self.forward,ignore=[self] + lasers)
+            if not raycast(self.position,self.down,distance=.15,ignore=[self]).hit:
+                self.in_air = True
+                self.y -= .1
+            else:
+                self.in_air = False
+            if 'm' in self.rule:
+                self.move(False)
+            if 'M' in self.rule:
+                self.move(True)
+            if 's' in self.rule:
+                self.shoot(False)
+            if 'S' in self.rule:
+                self.shoot(True)
 
 class BlackScreen(Entity):
     def __init__(self):
@@ -751,6 +807,9 @@ class Cmd(TextField):
                 self.text = self.text.replace('olaf','player.olaf')
                 self.text = self.text.replace('baleog','player.baleog')
                 self.text = self.text.replace('print','print_on_screen')
+                self.text = self.text.replace('*kill','player.for_all("lives = -1")')
+                self.text = self.text.replace('*heal','player.for_all("lives = 3")')
+                self.text = self.text.replace('*heal+','player.for_all("lives = 4")')
                 exec(self.text)
             except:
                 pass
@@ -996,7 +1055,7 @@ class VikingsImages(Sprite):
                         a = player.baleog.pick_up_item(player.erik.inventory[self.selected_item])
                         if not a:
                             return
-                        self.selected_item_viking = 1
+                        self.selected_item_viking = 2
                         player.erik.inventory[self.selected_item] = None
                         self.selected_item = a
                         player.active = 2
@@ -1133,9 +1192,11 @@ def signal_send(signal):
 
 def load_map(n):
     global exit_entity
-    application.pause()
     with open(file+f'assets/maps/{n}') as f:
         lines = f.read()
+    erik_pos = False
+    olaf_pos = False
+    baleog_pos = False
     for line in lines.split('\n'):
         if not '#' in line:
             data = line.split(' ')
@@ -1144,14 +1205,17 @@ def load_map(n):
                     objs_not_collides.append(E(type=data[0],data=None,position=(float(data[1])*2,float(data[2])*2,float(data[3])*2)))
                 elif data[0] == 'c':
                     acids.append(E(type=data[0],data=None,position=(float(data[1])*2,float(data[2])*2,float(data[3])*2)))
-                elif data[0] in 'ahi':
+                elif data[0] in 'ahik':
                     objs.append(E(type=data[0],data=None,position=(float(data[1])*2,float(data[2])*2,float(data[3])*2)))
                 elif data[0] == 'E':
                     player.erik.position = (float(data[1])*2,float(data[2])*2,float(data[3])*2)
+                    erik_pos = True
                 elif data[0] == 'O':
                     player.olaf.position = (float(data[1])*2,float(data[2])*2,float(data[3])*2)
+                    olaf_pos = True
                 elif data[0] == 'B':
                     player.baleog.position = (float(data[1])*2,float(data[2])*2,float(data[3])*2)
+                    baleog_pos = True
             if len(data) == 5:
                 if data[0] in 'bdfgj':
                     objs_not_collides.append(E(type=data[0],data=data[4],position=(float(data[1])*2,float(data[2])*2,float(data[3])*2)))
@@ -1159,15 +1223,23 @@ def load_map(n):
                     acids.append(E(type=data[0],data=data[4],position=(float(data[1])*2,float(data[2])*2,float(data[3])*2)))
                 elif data[0] == 'e':
                     enemies.append(Enemy(data=data[4],position=(float(data[1])*2,float(data[2])*2,float(data[3])*2)))
-                elif data[0] in 'ahi':
+                elif data[0] in 'ahik':
                     objs.append(E(type=data[0],data=data[4],position=(float(data[1])*2,float(data[2])*2,float(data[3])*2)))
                 elif data[0] == 'E':
                     player.erik.position = (float(data[1])*2,float(data[2])*2,float(data[3])*2)
+                    erik_pos = True
                 elif data[0] == 'O':
                     player.olaf.position = (float(data[1])*2,float(data[2])*2,float(data[3])*2)
+                    olaf_pos = True
                 elif data[0] == 'B':
                     player.baleog.position = (float(data[1])*2,float(data[2])*2,float(data[3])*2)
-    application.resume()
+                    baleog_pos = True
+    if not erik_pos:
+        player.erik.position = (0,0,0)
+    if not olaf_pos:
+        player.olaf.position = (0,0,0)
+    if not baleog_pos:
+        player.baleog.position = (0,0,0)
     try:
         exit_entity
     except:
@@ -1187,6 +1259,10 @@ def update():
         player.for_all('set_collider(False)')
     except:
         pass
+
+def set_game_state_normal():
+    global game_state
+    game_state = 1
 
 def reload_map(map_name):
     global objs, arrows, acids, objs_not_collides, enemies, lasers
@@ -1227,25 +1303,40 @@ def reload_map(map_name):
     arrows = []
     lasers = []
     enemies = []
-    application.pause()
-    player.restart()
     load_map(map_name)
-    application.resume()
+    player.restart()
+    invoke(set_game_state_normal,delay=.5)
+
+def reset_game_over():
+    reload_map(selected_map)
+    destroy(tmp1)
+    destroy(tmp2)
 
 def game_over():
-    reload_map(selected_map)
+    global game_state, tmp1, tmp2
+    game_state = 4
+    tmp1 = Entity(model='quad',parent=camera.ui,color=(0,0,0,1),scale=(1000,1000))
+    some = random.choice([
+        '<green>Olaf<default>: A SNAŽ SE!',
+        '<red>Erik<default>: Jak dlouho tady ještě budeme šaškovat?',
+        '<yellow>Baleog<default>: Cože, my tu ještě pořád jsme?',
+        '<red>Erik<default>: Proč nejdeme domů? Vždyť stejně tady nic nezmůžeme!',
+        '<red>Olaf<default>: Co jsme komu provedli?',
+        ])
+    tmp2 = Text(text=f'<scale:2><red>PROHRÁL JSI<default>\n<scale:1>zkus to znovu<default>\n<scale:0.7>{some}<default>',origin=(0,0))
+    invoke(reset_game_over,delay=100)
 
 def win():
-    global selected_map
-    application.pause()
+    global selected_map, game_state
+    game_state = 2
     with open(file+'assets/maps/maps') as f:
         maps = f.read().split('\n')
     next_map = maps[maps.index(selected_map) + 1]
     if next_map != ':':
         selected_map = next_map
         reload_map(next_map)
-        application.resume()
     else:
+        game_state = 3
         with open(file+'assets/maps/maps') as f:
             levels = f.read().replace(':','')
         tmp1 = Entity(model='quad',parent=camera.ui,color=(0,0,0,1),scale=(1000,1000))
@@ -1255,14 +1346,18 @@ def win():
         mouse.visible = True
 
 def start():
-    global player, vikings_images
+    global player, vikings_images, game_state
     with open(file+f'assets/maps/{selected_map}'):
         pass
-    application.pause()
     player = Player()
     load_map(selected_map)
     vikings_images = VikingsImages()
-    application.resume()
+    game_state = 1
+
+def input(key):
+    if game_state == 4:
+        if key in 'SPACE ENTER'.split(' '):
+            reset_game_over()
 
 file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
 objs = []
@@ -1275,6 +1370,12 @@ mouse_entities = []
 max_id = 0
 fps = 0
 inventory_timer = 0
+# 0 = before game
+# 1 = game
+# 2 = win
+# 3 = full win
+# 4 = game over
+game_state = 0
 
 app = Ursina(development_mode=False,borderless=False,title='Lost Vikings 3D')
 window.color = (0,0,0,1)
