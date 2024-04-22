@@ -837,7 +837,8 @@ class PasswdInput(Entity):
                 selected_map = ''.join(self.content)
                 start()
                 c = True
-            except:
+            except Exception as e:
+                print(e)
                 t = Text('invalid password',origin=(0,.5),y=-.01)
                 t.fade_out(duration=1)
                 destroy(t,1)
