@@ -63,7 +63,7 @@ class Viking(Entity):
             self.collider = None
     def update(self):
         if self.lives > 0:
-            if self.animations and raycast(self.head.world_position,direction=self.up,ignore=[shield,self,exit_entity] + objs_not_collides + acids + [player.erik,player.olaf,player.baleog],distance=.2).hit:
+            if self.animations and raycast(self.head.world_position,direction=self.up,ignore=[shield,self,exit_entity] + objs_not_collides + acids + [player.erik,player.olaf,player.baleog],distance=1).hit:
                 try:
                     for i in self.animations:
                         i.kill()
@@ -232,9 +232,10 @@ class Arrow(Entity):
                 if hit_info.entity and hit_info.entity.type == 'd':
                     hit_info.entity.d_press()
                 if hit_info.entity and hit_info.entity.type == 'e':
-                    hit_info.entity.hit()
                     if self.fire:
                         hit_info.entity.kill()
+                    else:
+                        hit_info.entity.hit()
                     destroy(self)
                     return
                 if hit_info.hit:
@@ -471,13 +472,15 @@ class Player(Entity):
     def restart(self):
         shield.visible = True
         shield.is_up = False
-        # self.for_all('position = (0,1,0)')
+        self.olaf.shield_up = False
+        self.baleog.fire_arrow = False
         self.for_all('rotation = (0,0,0)')
         self.for_all('pivot.rotation = (0,0,0)')
         self.for_all('visible = True')
         self.for_all('lives = 3')
         self.for_all('live = True')
         self.for_all('in_exit = False')
+        self.for_all('air_time = 0')
         self.for_all("inventory_selected = '1'")
         self.for_all("model='assets/models/viking.obj'")
         self.for_all("inventory = {'1':None,'2':None,'3':None,'4':None}")
@@ -1307,7 +1310,7 @@ def reload_map(map_name):
     player.restart()
     invoke(set_game_state_normal,delay=.5)
 
-def reset_game_over():
+def reset():
     reload_map(selected_map)
     destroy(tmp1)
     destroy(tmp2)
@@ -1322,20 +1325,20 @@ def game_over():
         '<red>Erik<default>: Jak dlouho tady ještě budeme šaškovat?',
         '<yellow>Baleog<default>: Cože, my tu ještě pořád jsme?',
         '<red>Erik<default>: Proč nejdeme domů? Vždyť stejně tady nic nezmůžeme!',
-        '<red>Olaf<default>: Co jsme komu provedli?',
+        '<green>Olaf<default>: Co jsme komu provedli?',
         ])
     tmp2 = Text(text=f'<scale:2><red>PROHRÁL JSI<default>\n<scale:1>zkus to znovu<default>\n<scale:0.7>{some}<default>',origin=(0,0))
-    invoke(reset_game_over,delay=100)
 
 def win():
-    global selected_map, game_state
+    global selected_map, game_state, tmp1, tmp2
     game_state = 2
     with open(file+'assets/maps/maps') as f:
         maps = f.read().split('\n')
     next_map = maps[maps.index(selected_map) + 1]
     if next_map != ':':
         selected_map = next_map
-        reload_map(next_map)
+        tmp1 = Entity(model='quad',parent=camera.ui,color=(0,0,0,1),scale=(1000,1000))
+        tmp2 = Text(text=f'heslo:\n\n<scale:1.5><yellow>{next_map}<default>',origin=(0,0))
     else:
         game_state = 3
         with open(file+'assets/maps/maps') as f:
@@ -1356,9 +1359,9 @@ def start():
     game_state = 1
 
 def input(key):
-    if game_state == 4:
-        if key in 'SPACE ENTER'.split(' '):
-            reset_game_over()
+    if game_state == 4 or game_state == 2:
+        if key in 'SPACE up/ENTER up'.split('/'):
+            reset()
 
 file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
 objs = []
