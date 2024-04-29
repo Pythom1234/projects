@@ -2,11 +2,13 @@
 import pygame
 import asyncio
 import sys
+import os
 from math import *
 
 pygame.font.init()
 pygame.display.init()
 
+os.chdir('platformer/')
 
 async def main():
     global selected_map, map_image, map, position, player_jump, screen_position, air_time, player_state, player_walk_cycle, run, color, screen, clock, lives, invicibility, player_hurt_timer, trampolines, coins, player_coins, stage, max_coins, checkpoints, player_checkpoint
