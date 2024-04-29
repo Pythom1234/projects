@@ -3,7 +3,6 @@ import pygame
 import asyncio
 import sys
 from math import *
-from PIL import Image
 
 pygame.font.init()
 pygame.display.init()
