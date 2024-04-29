@@ -4,6 +4,8 @@ import asyncio
 import sys
 from math import *
 
+file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
+
 pygame.font.init()
 pygame.display.init()
 
@@ -34,11 +36,11 @@ async def main():
         exit()
     def load_map(map_name):
         global map_image, map, position, player_jump, screen_position, air_time, player_state, player_walk_cycle, lives, invicibility, player_hurt_timer, trampolines, coins, player_coins, stage, max_coins, checkpoints, player_checkpoint
-        map_image = [pygame.image.load(f'assets/maps/map{map_name}_image0.png'),pygame.image.load(f'assets/maps/map{map_name}_image1.png')]
+        map_image = [pygame.image.load(file+f'assets/maps/map{map_name}_image0.png'),pygame.image.load(file+f'assets/maps/map{map_name}_image1.png')]
         trampolines = []
         coins = []
         checkpoints = []
-        map = pygame.image.load(f'assets/maps/map{map_name}.png')
+        map = pygame.image.load(file+f'assets/maps/map{map_name}.png')
         for x in range(map.get_width()):
             for y in range(map.get_height()):
                 color = map.get_at((x,y))
@@ -68,21 +70,21 @@ async def main():
     run = True
     player_color = 'green'
     font = pygame.font.Font(size=55)
-    heart_empty = pygame.image.load(f'assets/images/UI/heart_empty.png')
-    heart_half = pygame.image.load(f'assets/images/UI/heart_half.png')
-    heart_full = pygame.image.load(f'assets/images/UI/heart_full.png')
-    p1 = pygame.image.load(f'assets/images/UI/p1.png')
-    p2 = pygame.image.load(f'assets/images/UI/p2.png')
-    p3 = pygame.image.load(f'assets/images/UI/p3.png')
-    trampoline_up = pygame.image.load(f'assets/images/trampoline_up.png')
-    trampoline_down = pygame.image.load(f'assets/images/trampoline_down.png')
-    checkpoint0 = pygame.image.load(f'assets/images/checkpoint0.png')
-    checkpoint1 = pygame.image.load(f'assets/images/checkpoint1.png')
-    checkpoint2 = pygame.image.load(f'assets/images/checkpoint2.png')
-    coin = pygame.image.load(f'assets/images/star.png')
+    heart_empty = pygame.image.load(file+f'assets/images/UI/heart_empty.png')
+    heart_half = pygame.image.load(file+f'assets/images/UI/heart_half.png')
+    heart_full = pygame.image.load(file+f'assets/images/UI/heart_full.png')
+    p1 = pygame.image.load(file+f'assets/images/UI/p1.png')
+    p2 = pygame.image.load(file+f'assets/images/UI/p2.png')
+    p3 = pygame.image.load(file+f'assets/images/UI/p3.png')
+    trampoline_up = pygame.image.load(file+f'assets/images/trampoline_up.png')
+    trampoline_down = pygame.image.load(file+f'assets/images/trampoline_down.png')
+    checkpoint0 = pygame.image.load(file+f'assets/images/checkpoint0.png')
+    checkpoint1 = pygame.image.load(file+f'assets/images/checkpoint1.png')
+    checkpoint2 = pygame.image.load(file+f'assets/images/checkpoint2.png')
+    coin = pygame.image.load(file+f'assets/images/star.png')
     player = {}
     for i in ['stand_l','stand_r','hurt_l','hurt_r','jump_l','jump_r'] + [f'walk{str(j+1).zfill(2)}_l' for j in range(11)] + [f'walk{str(j+1).zfill(2)}_r' for j in range(11)]:
-        player[i] = pygame.image.load(f'assets/images/player/{player_color}/{i}.png')
+        player[i] = pygame.image.load(file+f'assets/images/player/{player_color}/{i}.png')
     load_map(selected_map)
     while run:
         stage += .08
@@ -114,7 +116,7 @@ async def main():
                     player_color = 'red'
                 player = {}
                 for i in ['stand_l','stand_r','hurt_l','hurt_r','jump_l','jump_r'] + [f'walk{str(j+1).zfill(2)}_l' for j in range(11)] + [f'walk{str(j+1).zfill(2)}_r' for j in range(11)]:
-                    player[i] = pygame.image.load(f'assets/images/player/{player_color}/{i}.png')
+                    player[i] = pygame.image.load(file+f'assets/images/player/{player_color}/{i}.png')
 
         keys = pygame.key.get_pressed()
         if (keys[pygame.K_UP] or keys[pygame.K_w]) and air_time == 0:
