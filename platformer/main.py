@@ -2,6 +2,7 @@
 import pygame
 import asyncio
 import sys
+import os
 from math import *
 
 file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
