@@ -99,12 +99,12 @@ async def main():
                     frameskip = 5
                 if event.key == pygame.K_l:
                     selected_map += 1
+                    total_coins += player_coins
                     try:
                         load_map(selected_map)
                     except:
                         run = False
                         win = True
-                    total_coins += player_coins
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LSHIFT:
                     frameskip = 1
@@ -174,12 +174,12 @@ async def main():
                 player_hurt_timer = 10
             if color == (0,0,255,255):
                 selected_map += 1
+                total_coins += player_coins
                 try:
                     load_map(selected_map)
                 except:
                     run = False
                     win = True
-                total_coins += player_coins
             if color == (255,0,255,255):
                 player_jump = 15
                 air_time = 0
