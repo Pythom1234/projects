@@ -1364,7 +1364,7 @@ def input(key):
         if key in 'SPACE up/ENTER up'.split('/'):
             reset()
 
-file = ''#'/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
+file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
 objs = []
 acids = []
 objs_not_collides = []
