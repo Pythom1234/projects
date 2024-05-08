@@ -563,9 +563,10 @@ class E(Entity):
             super().__init__(model=f'assets/models/slime0.obj',texture=f'assets/textures/slime.png',collider=None,**kwargs)
             self.collider = BoxCollider(self,(0,0,0),(2,2,2))
             self.change_to_normal = 0
-        self.id = max_id
-        max_id += 1
-        self.name = str(self.id)
+        try:
+            self.id = max_id
+            max_id += 1
+            self.name = str(self.id)
     def update(self):
         if game_state == 1:
             if self.type == 'c':
