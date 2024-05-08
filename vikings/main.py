@@ -563,9 +563,9 @@ class E(Entity):
             super().__init__(model=f'assets/models/slime0.obj',texture=f'assets/textures/slime.png',collider=None,**kwargs)
             self.collider = BoxCollider(self,(0,0,0),(2,2,2))
             self.change_to_normal = 0
+        self.id = max_id
+        max_id += 1
         try:
-            self.id = max_id
-            max_id += 1
             self.name = str(self.id)
         except:
             pass
@@ -580,18 +580,16 @@ class E(Entity):
                     self.timer = 5
             if self.type == 'd':
                 if self.timer < 0:
-                    self.color = color.rgb(255,255,255)
-                if self in mouse_entities and distance(self,camera) < 2.2:
-                    self.alpha = 0.5
-                else:
-                    self.alpha = 1
+                    self.color = (1,1,1,1)
+                    if self in mouse_entities and distance(self,camera) < 2.2:
+                        self.color = (1,1,1,0.5)
             if self.type == 'g':
                 if self in mouse_entities:
                     self.tooltip.enabled = True
-                    self.alpha = 0.5
+                    self.color = (1,1,1,0.5)
                 else:
                     self.tooltip.enabled = False
-                    self.alpha = 1
+                    self.color = (1,1,1,1)
             if self.type == 'h':
                 self.fall_after -= 1
                 if self.fall_after == 0:
@@ -840,8 +838,7 @@ class PasswdInput(Entity):
                 selected_map = ''.join(self.content)
                 start()
                 c = True
-            except Exception as e:
-                print(e)
+            except:
                 t = Text('invalid password',origin=(0,.5),y=-.01)
                 t.fade_out(duration=1)
                 destroy(t,1)
@@ -1367,7 +1364,7 @@ def input(key):
         if key in 'SPACE up/ENTER up'.split('/'):
             reset()
 
-file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
+file = ''#'/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
 objs = []
 acids = []
 objs_not_collides = []
