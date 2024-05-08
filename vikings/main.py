@@ -567,6 +567,8 @@ class E(Entity):
             self.id = max_id
             max_id += 1
             self.name = str(self.id)
+        except:
+            pass
     def update(self):
         if game_state == 1:
             if self.type == 'c':
