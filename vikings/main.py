@@ -362,7 +362,7 @@ class Baleog(Viking):
                 self.tensioning = False
                 self.tension = 0
             if self.active:
-                if key == 'SPACE' and not self.tensioning and self.chopping < 0:
+                if key == 'SPACE' and not self.tensioning and self.chopping < 0 and not self.ladder < 1.8:
                     Sword(parent=self,position=(0,.5,0))
                     self.chopping = 25
             super().input(key)
@@ -1364,7 +1364,7 @@ def input(key):
         if key in 'SPACE up/ENTER up'.split('/'):
             reset()
 
-file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
+file = ''#'/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
 objs = []
 acids = []
 objs_not_collides = []
