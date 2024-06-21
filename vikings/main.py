@@ -144,6 +144,8 @@ class Viking(Entity):
                     self.suspended_gravity = 20
                 elif held_keys['SPACE'] and self.ladder < 2:
                     self.suspended_gravity = 20
+                elif self.ladder < 1.8:
+                    self.air_time = 40
                 if self.suspended_gravity != 0:
                     self.suspended_gravity -= 1
                     self.air_time = 0
@@ -839,7 +841,7 @@ class PasswdInput(Entity):
                 start()
                 c = True
             except:
-                t = Text('invalid password',origin=(0,.5),y=-.01)
+                t = Text('neplatné heslo',origin=(0,.5),y=-.01)
                 t.fade_out(duration=1)
                 destroy(t,1)
                 c = False
@@ -1364,7 +1366,7 @@ def input(key):
         if key in 'SPACE up/ENTER up'.split('/'):
             reset()
 
-file = '/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
+file = ''#'/'.join(os.path.abspath(__file__).split('/')[:-1])+'/'
 objs = []
 acids = []
 objs_not_collides = []
